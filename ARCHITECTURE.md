@@ -16,7 +16,10 @@ We use a relational database (**PostgreSQL**) to ensure ACID compliance for lead
 - **EventLog**: `id`, `leadId`, `eventType` (LEAD_CREATED, EMAIL_SENT, REPLY_RECEIVED), `timestamp`, `details`.
 
 ## 3. Queue & Retry Logic
-Outbound outreach and AI heavy-lifting are handled by **BullMQ** (powered by Redis).
+Outbound outreach and AI heavy-lifting are designed to be handled by **BullMQ** (powered by Redis).
+
+> **Note for Prototype**: This implementation uses a robust in-memory `MockQueueService` to simulate async processing and retries without requiring a local Redis instance.
+
 - **Delayed Jobs**: For scheduled follow-ups.
 - **Retry Strategy**: Exponential backoff for transient failures (e.g., SMTP 421 errors, AI rate limits).
 - **Dead Letter Queues (DLQ)**: For messages that fail after maximum retries, alerting sales ops for manual intervention.
