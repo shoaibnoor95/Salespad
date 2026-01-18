@@ -1,23 +1,31 @@
 # Loom Script: Tech Lead Screening Task
 
-## Intro (30s)
-"Hi Adam and the SalesPad team. I'm Shoaib, and today I'm walking you through the architecture and prototype I've built for our outbound sales automation platform."
+## Intro (45s)
+"Hi Adam and the SalesPad team. I'm Shoaib. Today, I want to walk you through the prototype I've built for our outbound sales automation platform. My goal was to build something that isn't just code, but a scalable foundation for a real product. I'll show you how it works and, more importantly, *why* I built it this way."
 
-## Architecture & Flow (1.5m)
-"The core of our system is a Modular Monolith. We're using Node.js and TypeScript for the backend.
-The flow starts when a lead is captured. Once a lead is in the system, we enqueue an outbound message job. 
-We're using a queue-based system (BullMQ in a production setting) to handle this asynchronously. This ensures that even if our email provider or AI service is slow, our main API remains responsive.
-When a prospect replies, we handle that via a webhook, log the event, and then trigger an AI generation job to draft a personalized response."
+## Architecture & Flow (2m)
+"First, let's talk about the design. Think of this system like a high-end restaurant kitchen.
+- **The Waiter (API)**: This is our Node.js backend. It takes orders (leads) from customers instantly.
+- **The Ticket Line (Queue)**: Instead of the chef trying to cook everything at once and burning the food, we use a **Queue System**. When a lead comes in, we put a 'ticket' on the line. This ensures that even if we have 10,000 leads come in at once, the system doesn't crash—it just works through them one by one.
+- **The Chefs (Workers)**: We have specialized workers for sending Emails, generating AI replies, and logging data.
+- **The Filing Cabinet (PostgreSQL)**: We upgraded the memory to a proper PostgreSQL database. This is our permanent record store, handled by Prisma, ensuring we never lose a customer's history."
 
-## Key Decisions (1m)
-"One key decision was using the **Adapter Pattern** for our outreach channels. This makes it trivial to add WhatsApp or LinkedIn tomorrow without touching our core orchestration logic. 
-I also prioritized **Event Logging** for every state transition. In a multi-channel system, observability is everything—you need to know exactly why a lead stopped moving."
+"The flow is simple: A lead enters via a form or ad -> The system validates them -> We check if they need an email or WhatsApp message -> The AI drafts a personalized note -> And we send it out, logging every single step."
 
-## What I'd Improve (45s)
-"If I had more time, I'd:
-1. Implement a more robust **Retry Strategy** with jitter to handle rate limits.
-2. Add a **Lead Scoring service** that uses AI to prioritize which replies need manual human intervention vs automated follow-up.
-3. Integrate real multi-tenant support for different sales teams."
+## Key Decisions (1.5m)
+"I made a few specific technical choices to make this future-proof:
+1.  **The 'Universal Adapter' (Adapter Pattern)**:
+    Just like a travel adapter lets you plug your phone into any wall socket in the world, I built an 'Adapter' for our messages. Right now, it sends Emails. But if tomorrow you want to send WhatsApp or LinkedIn messages, we just plug in a new 'adapter' without rewriting the whole system. 
+2.  **Safety First (Database Limits)**:
+    I added strict rules to the database—like making sure two leads can't share the same email. This acts like a bouncer at the door, keeping our data clean and preventing embarrassing double-messages to prospects.
+3.  **Reliability (Automated Testing)**:
+    I didn't just write code; I wrote tests that *check* the code. Before I hand this over, I run a command that simulates a user creating a lead and sending a message. It passes 100% of the time, so you can trust it works."
 
-## Outro (15s)
-"Thanks for watching. I've focused on clean, modular code that's ready to scale. Looking forward to your feedback!"
+## What I'd Improve (1m)
+"This is a solid prototype, but for the next version, I would add:
+1.  **Smart Retries**: If a prospect's email server is down, we should wait 5 minutes and try again automatically.
+2.  **Lead Scoring**: Using AI to tell the sales rep, 'Hey, this person is 90% likely to buy, call them now!' vs 'This person is just looking.'
+3.  **Team Accounts**: Currently, it's single-player. I'd add features for whole sales teams to collaborate on the same list."
+
+## Outro (30s)
+"Thanks for watching. I wanted to deliver something that shows not just technical skill, but product thinking—building a system that is robust, scalable, and ready for whatever the business needs next. I'm looking forward to your feedback!"

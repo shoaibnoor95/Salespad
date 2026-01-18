@@ -5,8 +5,10 @@ This repository contains the Tech Lead screening task submission for SalesPad. I
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (v14+)
-- npm
+- **Node.js**: v18+ (LTS recommended)
+- **npm**: v9+
+- **PostgreSQL**: v14+ (Local running instance)
+- **Git**: For version control
 
 ### Installation
 ```bash

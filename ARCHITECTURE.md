@@ -55,7 +55,7 @@ Leads entering from different sources (Ads, Forms, LinkedIn) are normalized by t
 
 ## 7. Architecture Diagram
 
-![SalesPad Architecture](assets/architecture.png)
+![SalesPad Architecture](https://raw.githubusercontent.com/shoaibnoor95/Salespad/refs/heads/main/assets/architecture.png)
 
 ```mermaid
 graph TD
