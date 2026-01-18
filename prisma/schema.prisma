@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Lead {
+  id        String     @id @default(uuid())
+  name      String
+  email     String?    @unique
+  phone     String?
+  status    String     @default("NEW") // NEW, OUTREACHED, REPLIED, AI_REPLIED
+  messages  Message[]
+  logs      EventLog[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([status])
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  leadId    String
+  lead      Lead     @relation(fields: [leadId], references: [id])
+  content   String
+  direction String   // INBOUND, OUTBOUND
+  channel   String   @default("EMAIL")
+  sentAt    DateTime @default(now())
+
+  @@index([leadId, sentAt])
+}
+
+model EventLog {
+  id        String   @id @default(uuid())
+  leadId    String
+  lead      Lead     @relation(fields: [leadId], references: [id])
+  type      String   // LEAD_CREATED, MESSAGE_SENT, REPLY_RECEIVED, AI_REPLY_GENERATED
+  details   String?
+  timestamp DateTime @default(now())
+
+  @@index([leadId, timestamp])
+}
