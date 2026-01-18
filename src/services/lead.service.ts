@@ -1,5 +1,4 @@
 import { leadModel, Lead, Message, LeadStatus, MessageDirection, EventType } from '../models/lead.model';
-import { EventLog } from '@prisma/client';
 
 /**
  * LeadService

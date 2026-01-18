@@ -17,3 +17,4 @@
 **Plan for tomorrow**
 - Handover the prototype to the team.
 - Record the Loom walkthrough explaining the code structure and verification steps.
+- Create PDF documentation for the architecture.

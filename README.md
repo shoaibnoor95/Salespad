@@ -50,7 +50,7 @@ Or use `curl` to interact with the endpoints:
 ## 🛠 Tech Stack
 - **Runtime**: Node.js
 - **Framework**: Express.js
-- **Database**: In-Memory Mock Store (for portability)
-- **Queue**: In-Memory Async Mock Queue
+- **Database**: PostgreSQL (Prisma ORM)
+- **Queue**: In-Memory Async Mock Queue (Simulates Redis/BullMQ)
 
 *Note: The implementation uses standard JavaScript to ensure maximum compatibility and ease of execution in various environments.*

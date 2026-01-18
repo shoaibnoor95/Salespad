@@ -35,21 +35,31 @@ Outbound outreach and AI heavy-lifting are designed to be handled by **BullMQ** 
 - **Real-time Updates**: WebSocket (Socket.io) or Server-Sent Events (SSE) to update the dashboard when a prospect replies.
 - **State Management**: React-Query on the frontend to manage server state and optimistic updates.
 
-## 6. Multi-Channel Approach
-We use an **Adapter/Strategy Pattern**. Each channel (Email, WhatsApp, etc.) implements a common interface:
-```typescript
-interface OutreachChannel {
-  send(lead: Lead, content: string): Promise<SendResult>;
-  validateRecipient(lead: Lead): boolean;
-}
-```
-This allows the `Outreach Orchestrator` to remain channel-agnostic, simply picking the right adapter based on the lead's preferred channel or the sequence configuration.
+## 6. Multi-Channel Strategy
+We handle multiple channels (Email, WhatsApp, LinkedIn, Voice, Ads) using a bidirectional approach:
+
+### Outbound (Sending)
+We use the **Adapter/Strategy Pattern** to decouple the core logic from channel specifics.
+- **Interface**: `OutreachChannel` defines `send()`, `validate()`, and `getCost()`.
+- **Adapters**:
+    - `EmailAdapter` -> Wraps SendGrid/SES.
+    - `WhatsAppAdapter` -> Wraps Twilio/Meta Business API.
+    - `VoiceAdapter` -> Wraps Bland AI / Vapi.
+- **Selection**: The `OutreachOrchestrator` selects the correct adapter at runtime based on the Lead's preference or Campaign settings.
+
+### Inbound (Landing/Ingestion)
+Leads entering from different sources (Ads, Forms, LinkedIn) are normalized by the **Ingestion Service**.
+- **Webhooks**: `POST /webhooks/:source` endpoints accept payload from FB Ads, LinkedIn Forms, etc.
+- **Normalization**: Converters map source-specific JSON (e.g., "job_title" vs "position") to our internal `Lead` schema.
+- **Attribution**: Metadata tags tracking the source channel (e.g., `source: "LINKEDIN_ADS"`).
 
 ## 7. Architecture Diagram
 
+![SalesPad Architecture](assets/architecture.png)
+
 ```mermaid
 graph TD
-    Client[Frontend / Webhook] --> API[Express/Fastify API]
+    Client[Frontend / Webhook] --> API[Express/NodeJS]
     API --> DB[(PostgreSQL)]
     API --> Queue[BullMQ / Redis]
     
